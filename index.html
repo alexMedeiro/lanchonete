@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Pedidos - Lanchonete</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Sistema de Pedidos - Lanchonete</h1>
+    </header>
+    <nav>
+        <a href="#" onclick="showScreen('register')">Registrar Pedido</a>
+        <a href="#" onclick="showScreen('openOrders')">Pedidos em Aberto</a>
+        <a href="#" onclick="showScreen('orderHistory')">Histórico de Pedidos</a>
+    </nav>
+    <div id="register" class="container screen">
+        <h2>Registrar Pedido</h2>
+        <form id="orderForm">
+            <label for="table">Mesa:</label>
+            <input type="text" id="table" name="table" required>
+
+            <label for="items">Itens:</label>
+            <input type="text" id="items" name="items" placeholder="Ex: Porção de batata, Cerveja" required>
+
+            <label for="notes">Observações:</label>
+            <input type="text" id="notes" name="notes" placeholder="Opcional">
+
+            <button type="submit">Registrar Pedido</button>
+        </form>
+    </div>
+
+    <div id="openOrders" class="container screen" style="display: none;">
+        <h2>Pedidos em Aberto</h2>
+        <div id="openOrdersList" class="order-list"></div>
+    </div>
+
+    <div id="orderHistory" class="container screen" style="display: none;">
+        <h2>Histórico de Pedidos</h2>
+        <label for="filterDate">Filtrar por Data:</label>
+        <input type="date" id="filterDate">
+        <div id="orderHistoryList" class="order-list"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
