@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Pedidos - Lanchonete</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f4f4f9;
+        }
+        header {
+            background-color: #ff5722;
+            color: white;
+            padding: 10px 20px;
+            width: 100%;
+            text-align: center;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        nav {
+            margin: 20px 0;
+        }
+        nav a {
+            margin: 0 10px;
+            text-decoration: none;
+            color: #ff5722;
+            font-weight: bold;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        form, .order-list {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #ff5722;
+            color: white;
+            cursor: pointer;
+            border: none;
+        }
+        button:hover {
+            background-color: #e64a19;
+        }
+        .order-item {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Sistema de Pedidos - Lanchonete</h1>
+    </header>
+    <nav>
+        <a href="#" onclick="showScreen('register')">Registrar Pedido</a>
+        <a href="#" onclick="showScreen('openOrders')">Pedidos em Aberto</a>
+        <a href="#" onclick="showScreen('orderHistory')">Histórico de Pedidos</a>
+    </nav>
+    <div id="register" class="container screen">
+        <h2>Registrar Pedido</h2>
+        <form id="orderForm">
+            <label for="table">Mesa:</label>
+            <input type="text" id="table" name="table" required>
+
+            <label for="items">Itens:</label>
+            <input type="text" id="items" name="items" placeholder="Ex: Porção de batata, Cerveja" required>
+
+            <label for="notes">Observações:</label>
+            <input type="text" id="notes" name="notes" placeholder="Opcional">
+
+            <button type="submit">Registrar Pedido</button>
+        </form>
+    </div>
+
+    <div id="openOrders" class="container screen" style="display: none;">
+        <h2>Pedidos em Aberto</h2>
+        <div id="openOrdersList" class="order-list"></div>
+    </div>
+
+    <div id="orderHistory" class="container screen" style="display: none;">
+        <h2>Histórico de Pedidos</h2>
+        <label for="filterDate">Filtrar por Data:</label>
+        <input type="date" id="filterDate">
+        <div id="orderHistoryList" class="order-list"></div>
+    </div>
+
+    <script>
+        const orderForm = document.getElementById('orderForm');
+        const openOrdersList = document.getElementById('openOrdersList');
+        const orderHistoryList = document.getElementById('orderHistoryList');
+        const filterDate = document.getElementById('filterDate');
+
+        let orders = JSON.parse(localStorage.getItem('orders')) || [];
+
+        function saveOrders() {
+            localStorage.setItem('orders', JSON.stringify(orders));
+        }
+
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.style.display = screen.id === screenId ? 'block' : 'none';
+            });
+        }
+
+        orderForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const table = e.target.table.value;
+            const items = e.target.items.value;
+            const notes = e.target.notes.value;
+            const timestamp = new Date().toISOString();
+
+            const newOrder = { table, items, notes, timestamp, status: 'open' };
+            orders.push(newOrder);
+
+            saveOrders();
+            renderOrders();
+
+            e.target.reset();
+        });
+
+        function renderOrders() {
+            openOrdersList.innerHTML = '';
+            orderHistoryList.innerHTML = '';
+
+            const filteredOrders = orders.filter(order => order.status === 'open');
+            filteredOrders.forEach(order => {
+                const orderItem = document.createElement('div');
+                orderItem.className = 'order-item';
+                orderItem.innerHTML = `
+                    <p><strong>Mesa:</strong> ${order.table}</p>
+                    <p><strong>Itens:</strong> ${order.items}</p>
+                    <p><strong>Observações:</strong> ${order.notes || 'Nenhuma'}</p>
+                    <button onclick="markAsReady('${order.timestamp}')">Marcar como Pronto</button>
+                `;
+                openOrdersList.appendChild(orderItem);
+            });
+
+            orders
+                .filter(order => order.status === 'ready')
+                .filter(order => !filterDate.value || order.timestamp.startsWith(filterDate.value))
+                .forEach(order => {
+                    const orderItem = document.createElement('div');
+                    orderItem.className = 'order-item';
+                    orderItem.innerHTML = `
+                        <p><strong>Mesa:</strong> ${order.table}</p>
+                        <p><strong>Itens:</strong> ${order.items}</p>
+                        <p><strong>Observações:</strong> ${order.notes || 'Nenhuma'}</p>
+                        <p><strong>Status:</strong> Pronto</p>
+                        <p><strong>Data:</strong> ${new Date(order.timestamp).toLocaleString()}</p>
+                    `;
+                    orderHistoryList.appendChild(orderItem);
+                });
+        }
+
+        function markAsReady(timestamp) {
+            const order = orders.find(o => o.timestamp === timestamp);
+            if (order) order.status = 'ready';
+            saveOrders();
+            renderOrders();
+        }
+
+        filterDate.addEventListener('change', renderOrders);
+
+        // Initial render
+        renderOrders();
+    </script>
+</body>
+</html>
