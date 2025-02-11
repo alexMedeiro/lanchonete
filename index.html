@@ -1,48 +1,125 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Pedidos - Lanchonete</title>
+    <title>NORWAY DRINK'S</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Chart.js -->
 </head>
 <body>
     <header>
-        <h1>Sistema de Pedidos - Lanchonete</h1>
+        <h1>NORWAY DRINK'S</h1>
     </header>
-    <nav>
-        <a href="#" onclick="showScreen('register')">Registrar Pedido</a>
-        <a href="#" onclick="showScreen('openOrders')">Pedidos em Aberto</a>
-        <a href="#" onclick="showScreen('orderHistory')">Histórico de Pedidos</a>
-    </nav>
-    <div id="register" class="container screen">
-        <h2>Registrar Pedido</h2>
-        <form id="orderForm">
-            <label for="table">Mesa:</label>
-            <input type="text" id="table" name="table" required>
 
-            <label for="items">Itens:</label>
-            <input type="text" id="items" name="items" placeholder="Ex: Porção de batata, Cerveja" required>
+    <main>
+        <section id="sales-section">
+            <h2>Adicionar Venda</h2>
+            <form id="sales-form">
+                <label for="drink-type">Tipo de Bebida:</label>
+                <select id="drink-type" name="drink-type">
+                    <option value="whisky">Whisky</option>
+                    <option value="caipirinha">Caipirinha</option>
+                    <option value="non-alcoholic">Sem Álcool</option>
+                </select>
 
-            <label for="notes">Observações:</label>
-            <input type="text" id="notes" name="notes" placeholder="Opcional">
+                <div id="whisky-options" class="drink-options">
+                    <label for="whisky-type">Tipo de Whisky:</label>
+                    <select id="whisky-type" name="whisky-type">
+                        <option value="jack-daniels">Jack Daniels</option>
+                        <option value="johnnie-walker">Johnnie Walker</option>
+                        <option value="jameson">Jameson</option>
+                    </select>
 
-            <button type="submit">Registrar Pedido</button>
-        </form>
-    </div>
+                    <label for="ice-flavor">Sabor do Gelo:</label>
+                    <select id="ice-flavor" name="ice-flavor">
+                        <option value="limao">Limão</option>
+                        <option value="laranja">Laranja</option>
+                        <option value="uva">Uva</option>
+                    </select>
 
-    <div id="openOrders" class="container screen" style="display: none;">
-        <h2>Pedidos em Aberto</h2>
-        <div id="openOrdersList" class="order-list"></div>
-    </div>
+                    <label for="energy-drink">Energético:</label>
+                    <select id="energy-drink" name="energy-drink">
+                        <option value="red-bull">Red Bull</option>
+                        <option value="monster">Monster</option>
+                        <option value="tnt">TNT</option>
+                    </select>
+                </div>
 
-    <div id="orderHistory" class="container screen" style="display: none;">
-        <h2>Histórico de Pedidos</h2>
-        <label for="filterDate">Filtrar por Data:</label>
-        <input type="date" id="filterDate">
-        <div id="orderHistoryList" class="order-list"></div>
-    </div>
+                <div id="caipirinha-options" class="drink-options">
+                    <label for="caipirinha-type">Tipo de Caipirinha:</label>
+                    <select id="caipirinha-type" name="caipirinha-type">
+                        <option value="vinho">Vinho</option>
+                        <option value="velho-barreiro">Velho Barreiro</option>
+                        <option value="vodka">Vodka</option>
+                    </select>
 
-    <script src="script.js"></script>
+                    <label for="fruit">Fruta:</label>
+                    <select id="fruit" name="fruit">
+                        <option value="morango">Morango</option>
+                        <option value="limao">Limão</option>
+                    </select>
+                </div>
+
+                <label for="cup-size">Tamanho do Copo:</label>
+                <select id="cup-size" name="cup-size">
+                    <option value="pequeno">Pequeno</option>
+                    <option value="medio">Médio</option>
+                    <option value="grande">Grande</option>
+                </select>
+
+                <label for="price">Preço:</label>
+                <input type="number" id="price" name="price" step="0.01" required>
+
+                <button type="submit">Adicionar Venda</button>
+            </form>
+
+            <button id="clear-sales">Limpar Lista de Vendas</button>
+        </section>
+
+        <section id="sales-list">
+            <h2>Lista de Vendas</h2>
+            <ul id="sales"></ul>
+        </section>
+
+        <section id="dashboard">
+            <h2>Dashboard</h2>
+            <div id="filter-dashboard">
+                <label for="filter-drink-type">Filtrar por Tipo de Bebida:</label>
+                <select id="filter-drink-type">
+                    <option value="">Todos</option>
+                    <option value="whisky">Whisky</option>
+                    <option value="caipirinha">Caipirinha</option>
+                    <option value="non-alcoholic">Sem Álcool</option>
+                </select>
+
+                <label for="filter-start-date">Data Inicial:</label>
+                <input type="date" id="filter-start-date">
+
+                <label for="filter-end-date">Data Final:</label>
+                <input type="date" id="filter-end-date">
+
+                <button id="filter-dashboard">Aplicar Filtro</button>
+            </div>
+            <div id="charts"></div>
+        </section>
+
+        <section id="investments">
+            <h2>Investimentos</h2>
+            <form id="investment-form">
+                <label for="investment-description">Descrição:</label>
+                <input type="text" id="investment-description" name="investment-description" required>
+
+                <label for="investment-amount">Valor:</label>
+                <input type="number" id="investment-amount" name="investment-amount" step="0.01" required>
+
+                <button type="submit">Adicionar Investimento</button>
+            </form>
+
+            <ul id="investment-list"></ul>
+        </section>
+    </main>
+
+    <script src="scripts.js"></script>
 </body>
 </html>
